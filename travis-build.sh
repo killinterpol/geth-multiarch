@@ -19,14 +19,14 @@ fi
 
 wget https://gethstore.blob.core.windows.net/builds/$GETH_SOURCE.tar.gz
 tar -xvf ./$GETH_SOURCE.tar.gz
-mv ./$GETH_SOURCE go-ethereum
+mv ./$GETH_SOURCE geth-multiarch
 
 if [ -d tmp ]; then
   docker rm build
   rm -rf tmp
 fi
 
-docker build -t go-ethereum \
+docker build -t geth-multiarch \
   --build-arg BASE_IMAGE=$BASE_IMAGE \
   --build-arg QEMU=$QEMU \
   .

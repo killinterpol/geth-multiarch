@@ -1,8 +1,8 @@
 ARG QEMU
 ARG ARCH=amd64
-ARG BASE_IMAGE=amd64/debian:stretch-slim
+ARG BASE_IMAGE=amd64/debian:buster-slim
 
 FROM ${BASE_IMAGE}
 
 ADD ${QEMU} /usr/bin/${QEMU}
-ADD go-ethereum /usr/local/bin/
+ADD geth-arm /usr/local/bin/
