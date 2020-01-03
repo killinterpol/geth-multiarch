@@ -7,22 +7,19 @@ addons:
 
 # pulls from binaries built at:
 # https://ethereum.github.io/go-ethereum/downloads/
-env:
-  jobs: 
-    - ARCH=arm   QEMU=qemu-arm-static     BASE_IMAGE=arm32v7/debian:buster-slim  GETH_SOURCE=geth-alltools-linux-arm7-1.9.9-01744997
-    - ARCH=arm64 QEMU=qemu-aarch64-static BASE_IMAGE=arm64v8/debian:buster-slim  GETH_SOURCE=geth-alltools-linux-arm64-1.9.9-01744997
-    - ARCH=amd64 QEMU=qemu-fake-static    BASE_IMAGE=amd64/debian:buster-slim    GETH_SOURCE=geth-alltools-linux-amd64-1.9.9-01744997
-
 stages:
   - name: build
   - name: test
-    if: (fork = false)
+    if: (true = false)  #force the tests to skip for now
   - name: package
     if: ((tag =~ ^v) AND (branch = master))
 
 jobs:
   include:
-    - stage: build
+    - &build-image
+      stage: build
+      env: 
+        - ARCH=arm   QEMU=qemu-arm-static     BASE_IMAGE=arm32v7/debian:buster-slim  GETH_SOURCE=geth-alltools-linux-arm7-1.9.9-01744997
       script: ./travis-build.sh
       after_success:
         - >
@@ -30,6 +27,12 @@ jobs:
             travis_retry timeout 5m echo "$DOCKER_PASS" | docker login -u="$DOCKER_USER" --password-stdin
             ./travis-deploy.sh
           fi
+    - <<: *build-image
+      env:
+        - ARCH=arm64 QEMU=qemu-aarch64-static BASE_IMAGE=arm64v8/debian:buster-slim  GETH_SOURCE=geth-alltools-linux-arm64-1.9.9-01744997
+    - <<: *build-image
+      env:
+        - ARCH=amd64 QEMU=qemu-fake-static    BASE_IMAGE=amd64/debian:buster-slim    GETH_SOURCE=geth-alltools-linux-amd64-1.9.9-01744997
     - stage: test
       script: echo "Skip tests"
     - stage: package

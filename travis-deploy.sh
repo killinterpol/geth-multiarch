@@ -1,6 +1,4 @@
 #!/bin/bash
-export DOCKER_CLI_EXPERIMENTAL=enabled
-
 set -e
 image="killinterpol/geth-multiarch"
 
