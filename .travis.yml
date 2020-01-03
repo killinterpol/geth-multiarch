@@ -18,18 +18,18 @@ env:
 jobs:
     include:
       - stage: compile
-      - script:  ./travis-build.sh
+        script:  ./travis-build.sh
       - stage: test
-      - script: echo "skipping tests"
+        script: echo "skipping tests"
       - stage: deploy
-      - script: 
+        script: 
         - >
           if [ -n "$TRAVIS_TAG" ]; then
             travis_retry timeout 5m echo "$DOCKER_PASS" | docker login -u="$DOCKER_USER" --password-stdin
             ./travis-deploy.sh
           fi
       - stage: package
-      - script: 
+        script: 
         - >
           if [ -n "$TRAVIS_TAG" ]; then
             ./travis-package.sh
