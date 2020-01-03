@@ -19,6 +19,8 @@ jobs:
     include:
       - stage: compile
       - script:  ./travis-build.sh
+      - stage: test
+      - script: echo "skipping tests"
       - stage: deploy
       - script: 
         - >
