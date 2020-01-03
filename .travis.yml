@@ -6,21 +6,28 @@ addons:
     packages:
       - docker-ce
 
+# pulls from binaries built at:
 # https://ethereum.github.io/go-ethereum/downloads/
-env:
-  jobs:
-    - ARCH=arm   QEMU=qemu-arm-static     BASE_IMAGE=arm32v7/debian:buster-slim  GETH_SOURCE=geth-alltools-linux-arm7-1.9.9-01744997
-    - ARCH=arm64 QEMU=qemu-aarch64-static BASE_IMAGE=arm64v8/debian:buster-slim  GETH_SOURCE=geth-alltools-linux-arm64-1.9.9-01744997
-    - ARCH=amd64 QEMU=qemu-fake-static    BASE_IMAGE=amd64/debian:buster-slim    GETH_SOURCE=geth-alltools-linux-amd64-1.9.9-01744997
+env: 
+  - ARCH=arm   QEMU=qemu-arm-static     BASE_IMAGE=arm32v7/debian:buster-slim  GETH_SOURCE=geth-alltools-linux-arm7-1.9.9-01744997
+  - ARCH=arm64 QEMU=qemu-aarch64-static BASE_IMAGE=arm64v8/debian:buster-slim  GETH_SOURCE=geth-alltools-linux-arm64-1.9.9-01744997 
+  - ARCH=amd64 QEMU=qemu-fake-static    BASE_IMAGE=amd64/debian:buster-slim    GETH_SOURCE=geth-alltools-linux-amd64-1.9.9-01744997 
 
-script:
-  - echo $TRAVIS_COMMIT
-  - echo $TRAVIS_TAG
-  - echo $TRAVIS_BRANCH
-  - echo $TRAVIS_BUILD_NUMBER
-  - ./travis-build.sh
-  - >
-    if [ -n "$TRAVIS_TAG" ]; then
-      travis_retry timeout 5m docker login -u="$DOCKER_USER" -p="$DOCKER_PASS"
-      ./travis-deploy.sh
-    fi
+jobs:
+    include:
+      - stage: compile
+        - script:  ./travis-build.sh
+      - stage: test
+      - stage: deploy
+        - script: 
+          - >
+            if [ -n "$TRAVIS_TAG" ]; then
+              travis_retry timeout 5m echo "$DOCKER_PASS" | docker login -u="$DOCKER_USER" --password-stdin
+              ./travis-deploy.sh
+            fi
+      - stage: package
+        - script: 
+          - >
+            if [ -n "$TRAVIS_TAG" ]; then
+              ./travis-package.sh
+            fi
