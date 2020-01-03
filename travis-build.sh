@@ -19,7 +19,7 @@ fi
 
 wget https://gethstore.blob.core.windows.net/builds/$GETH_SOURCE.tar.gz
 tar -xvf ./$GETH_SOURCE.tar.gz
-mv ./$GETH_SOURCE geth-multiarch
+mv ./$GETH_SOURCE go-ethereum
 
 if [ -d tmp ]; then
   docker rm build
