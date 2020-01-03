@@ -1,6 +1,8 @@
+language: ruby
+os: linux
+
 services:
   - docker
-
 addons:
   apt:
     packages:
@@ -16,18 +18,17 @@ env:
 jobs:
     include:
       - stage: compile
-        - script:  ./travis-build.sh
-      - stage: test
+      - script:  ./travis-build.sh
       - stage: deploy
-        - script: 
-          - >
-            if [ -n "$TRAVIS_TAG" ]; then
-              travis_retry timeout 5m echo "$DOCKER_PASS" | docker login -u="$DOCKER_USER" --password-stdin
-              ./travis-deploy.sh
-            fi
+      - script: 
+        - >
+          if [ -n "$TRAVIS_TAG" ]; then
+            travis_retry timeout 5m echo "$DOCKER_PASS" | docker login -u="$DOCKER_USER" --password-stdin
+            ./travis-deploy.sh
+          fi
       - stage: package
-        - script: 
-          - >
-            if [ -n "$TRAVIS_TAG" ]; then
-              ./travis-package.sh
-            fi
+      - script: 
+        - >
+          if [ -n "$TRAVIS_TAG" ]; then
+            ./travis-package.sh
+          fi
