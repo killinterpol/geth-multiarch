@@ -12,7 +12,6 @@ stages:
   - name: test
     if: (true = false)  #force the tests to skip for now
   - name: package
-    if: ((tag IS present) AND (branch = master))
 
 jobs:
   include:
@@ -37,5 +36,11 @@ jobs:
     - stage: test
       script: echo "Skip tests"
     - stage: package
-      script: ./travis-package.sh
+      script: 
+        - >
+          if [ -n "$TRAVIS_TAG" ]; then
+            travis_retry timeout 5m echo "$DOCKER_PASS" | docker login -u="$DOCKER_USER" --password-stdin
+            ./travis-package.sh
+            echo "Deployed Manifest"
+          fi
 
