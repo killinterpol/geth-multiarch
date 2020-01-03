@@ -1,6 +1,3 @@
-language: ruby
-os: linux
-
 services:
   - docker
 addons:
@@ -10,17 +7,18 @@ addons:
 
 # pulls from binaries built at:
 # https://ethereum.github.io/go-ethereum/downloads/
+stages:
+  - compile
+  - deploy
+  - package
 env: 
   - ARCH=arm   QEMU=qemu-arm-static     BASE_IMAGE=arm32v7/debian:buster-slim  GETH_SOURCE=geth-alltools-linux-arm7-1.9.9-01744997
   - ARCH=arm64 QEMU=qemu-aarch64-static BASE_IMAGE=arm64v8/debian:buster-slim  GETH_SOURCE=geth-alltools-linux-arm64-1.9.9-01744997 
   - ARCH=amd64 QEMU=qemu-fake-static    BASE_IMAGE=amd64/debian:buster-slim    GETH_SOURCE=geth-alltools-linux-amd64-1.9.9-01744997 
-
 jobs:
     include:
       - stage: compile
         script:  ./travis-build.sh
-      - stage: test
-        script: echo "skipping tests"
       - stage: deploy
         script: 
         - >
