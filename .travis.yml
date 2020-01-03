@@ -9,6 +9,10 @@ env:
     - ARCH=amd64 QEMU=qemu-fake-static    BASE_IMAGE=amd64/debian:buster-slim    GETH_SOURCE=geth-alltools-linux-arm64-1.9.9-01744997
 
 script:
+  - echo $TRAVIS_COMMIT
+  - echo $TRAVIS_TAG
+  - echo $TRAVIS_BRANCH
+  - echo $TRAVIS_BUILD_NUMBER
   - ./travis-build.sh
   - >
     if [ -n "$TRAVIS_TAG" ]; then
